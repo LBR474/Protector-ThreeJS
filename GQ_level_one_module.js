@@ -1,0 +1,669 @@
+
+import * as THREE from 'https://cdn.skypack.dev/three@0.120.0'
+
+import * as OrbitControls from 'https://cdn.skypack.dev/three@0.120.0/examples/jsm/controls/OrbitControls.js'
+//import { DragControls } from '../examples/jsm/controls/DragControls'
+
+
+
+import * as torus_loads from './torus.js';
+
+import * as icosa_loads from './icosa_hedron.js';
+
+import * as gltf_loads from './gltf_loading_script.js';
+
+import * as score_update from './score_update.js';
+//import { } from './_____.js';
+
+//import * as mine_multi_pieces from './mine_multi_pieces.js';  
+
+import * as mine_mover_functions from './mine_mover_1.js';
+
+import * as exp_func from './explosion_functions.js';
+
+
+
+
+
+export {
+    scene,
+    backgroundScene,
+    renderer,
+    camera,
+    pause,
+
+    dragAction,
+    blue_engine_color,
+
+};
+
+
+const scene = new THREE.Scene();
+
+
+const texloader = new THREE.TextureLoader();
+const bgTexture = texloader.load('./images/extra_stars_pic.png');
+//const bgTexture = texloader.load('./images/space_pic.jpg');
+const floating_mine_green = texloader.load('./images/nx.png');
+const floating_mine_blue = texloader.load('./images/tothian_mine_blue_big_2D_1.png');
+const floating_mine_red = texloader.load('./images/tothian_mine_red_big_2D_1.png');
+
+
+// scene.background = new THREE.CubeTextureLoader()
+//     .setPath('../examples/textures/cube/MilkyWay/')
+//     .load([
+//         'dark-s_nx.jpg',
+//         'dark-s_px.jpg',
+//         'dark-s_ny.jpg',
+//         'dark-s_py.jpg',
+//         'dark-s_nz.jpg',
+//         'dark-s_pz.jpg',
+//     ]);
+
+
+
+const background_color = new THREE.Color(0xFFFFFF);
+
+//scene.background = background_color
+
+// // background scene and camera area begins .................................................
+
+
+// Create your background scene
+var backgroundScene = new THREE.Scene();
+const backgroundCamera = new THREE.PerspectiveCamera(75,
+    window.innerWidth / window.innerHeight, 0.01, 100);
+backgroundScene.add(backgroundCamera);
+backgroundScene.background = new THREE.CubeTextureLoader()
+    .setPath('../examples/textures/cube/MilkyWay/')
+    .load([
+        'dark-s_nx.jpg',
+        'dark-s_px.jpg',
+        'dark-s_ny.jpg',
+        'dark-s_py.jpg',
+        'dark-s_nz.jpg',
+        'dark-s_pz.jpg',
+    ]);
+//backgroundScene.background = background_color;
+
+
+
+
+// // front scene camera area begins .....................................................
+const camera = new THREE.PerspectiveCamera(75,
+    window.innerWidth / window.innerHeight, 0.01, 100);
+
+
+backgroundCamera.position.z = 7;
+backgroundCamera.position.y = 3;
+
+camera.position.z = 7;
+camera.position.y = 1;
+
+
+
+scene.add(camera);
+
+
+
+// // lights area begins .....................................................
+
+{
+    const color = 0xFFFFFF;
+    const intensity = 1;
+    const light = new THREE.DirectionalLight(color, intensity);
+    light.position.set(0, 2, 2);
+    const light2 = new THREE.DirectionalLight(0xFFFFFF, intensity);
+    light2.position.set(0, -1, 2);
+    light2.target.position.set(0, 0, 1.5);
+    scene.add(light, light2);
+    scene.add(light2.target);
+}
+
+
+
+// // canvas area begins .....................................................
+
+const canvas = document.querySelector('#c');
+const renderer = new THREE.WebGLRenderer({
+    canvas,
+    //antialias: true,
+    preserveDrawingBuffer: true,
+    autoClearColor: false,
+});
+
+// //  controls area begins .....................................................
+
+// const controls = new OrbitControls.OrbitControls(camera, canvas);
+
+// controls.target.set(0, 1, 0);
+// controls.passive = true;
+// controls.update();
+
+
+
+// // global variable area begins .....................................................
+
+let pause = false;
+let points_swarm_size = 30
+
+
+// // points array area begins ................................................................
+const colorArray = [new THREE.Color(0xFF00FF), new THREE.Color(0x00FFFF),
+new THREE.Color(0x00FFFF0)];
+const positions = [];
+const colors = [];
+
+for (let i = 0; i < 300; i++) {
+
+    positions.push((Math.random() - 0.5) * points_swarm_size, (Math.random() - 0.5) * points_swarm_size,
+        (Math.random() - 0.5) * points_swarm_size);
+
+    const clr = colorArray[Math.floor(Math.random() * colorArray.length)];
+    //const clr = new THREE.Color(0xFFFFFF);
+
+    colors.push(clr.r, clr.g, clr.b);
+
+}
+
+const particles_geometry = new THREE.BufferGeometry();
+particles_geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+particles_geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+
+const particles_material = new THREE.PointsMaterial({
+    size: 1, vertexColors: true, depthTest: false, sizeAttenuation: false,
+    //map: floating_mine_green,
+});
+
+const particlesMesh = new THREE.Points(particles_geometry, particles_material);
+
+
+scene.add(
+    particlesMesh,
+
+);
+const boxmaterial = new THREE.MeshBasicMaterial({ color: 'black' });
+const boxmat_array = [];
+for (let index = 0; index < 9; index++) {
+    boxmat_array[index] = new THREE.MeshBasicMaterial({ color: 'black' });
+
+}
+
+const whiteColor = new THREE.MeshBasicMaterial({ color: 'white' });
+const whiteColor1 = new THREE.MeshBasicMaterial({ color: 'white' });
+
+
+
+
+
+var scale = 0.05;
+var lastX = 0;
+var lastY = 0;
+var meshX = 0;
+var meshY = 0;
+
+var dragger = new Draggable(document.createElement("div"), {
+    onDrag: dragAction,
+    bounds: {
+        target: "#colmiddle1",
+        minX: -150,
+        maxX: 150,
+        minY: -100,
+        maxY: 75,
+
+
+    },
+    // type: 'x, y',
+    trigger: renderer.domElement,
+    throwProps: true,
+    throwResistance: 10000
+});
+
+function dragAction() {
+
+    var x = dragger.x;
+    var y = dragger.y;
+
+    var dx = x - lastX;
+    var dy = y - lastY;
+
+    lastX = x;
+    lastY = y;
+
+    meshX += dx;
+    meshY -= dy;
+
+
+
+    gltf_loads.protector_group.position.y = meshY * scale;
+    gltf_loads.protector_group.position.x = meshX * scale;
+
+
+}
+
+
+// // render area begins .....................................................
+
+var clock = new THREE.Clock();
+let render_counter = 0;
+let protector_counter = 0;
+let protector_group_counter = 0;
+let mines_adder_counter = 0;
+const loadingElem = document.querySelector('#loading');
+
+
+
+
+
+// 
+
+
+
+
+
+const mine_mover_group = new THREE.Group()
+
+
+
+async function render() {
+
+    //   const loadingElem = document.querySelector('#loading');
+
+
+
+
+    if (resizeRendererToDisplaySize(renderer)) {
+        //const canvas = renderer.domElement;
+        camera.aspect = canvas.clientWidth / canvas.clientHeight;
+        camera.updateProjectionMatrix();
+        //controls.update();
+    }
+    render_counter += 1;
+
+    if (
+        gltf_loads.mines_array.length >= gltf_loads.number_of_mines * 3
+    ) {
+        loadingElem.style.display = 'none';
+    }
+
+
+    if (loadingElem.style.display == 'none') {
+        protector_returner();
+        protector_group_adder();
+        dragAction();
+
+    }
+
+
+    if (render_counter > 10 && loadingElem.style.display == 'none') {
+        particlesMesh.rotation.y += 0.0011;
+
+        gltf_loads.mines_array.forEach((element, ndx) => {
+            element.rotation.y += 0.1;
+
+        });
+    }
+
+
+    renderer.render(scene, camera);
+
+
+    requestAnimationFrame(render);
+
+}
+
+const protector_returner = () => {
+
+
+    protector_counter += 1;
+
+    scene.add(gltf_loads.protector);
+
+
+
+};
+
+
+
+
+function protector_group_adder() {
+
+    if (gltf_loads.hull_and_tail) {
+        protector_group_counter += 1;
+        gltf_loads.protector_group.add(
+            gltf_loads.nose_cone,
+            gltf_loads.hull_and_tail,
+
+
+            gltf_loads.left_front_engine_light_1,
+            gltf_loads.left_front_engine_light_2,
+            gltf_loads.left_front_engine_light_3,
+            gltf_loads.left_front_engine_light_4,
+            gltf_loads.left_front_engine_light_5,
+            gltf_loads.left_front_engine_light_6,
+            gltf_loads.left_front_engine_light_7,
+            gltf_loads.left_front_engine_light_8,
+
+
+
+            gltf_loads.right_front_engine_light_1,
+            gltf_loads.right_front_engine_light_2,
+            gltf_loads.right_front_engine_light_3,
+            gltf_loads.right_front_engine_light_4,
+            gltf_loads.right_front_engine_light_5,
+            gltf_loads.right_front_engine_light_6,
+            gltf_loads.right_front_engine_light_7,
+            gltf_loads.right_front_engine_light_8,
+
+            gltf_loads.left_rear_engine_light_1,
+            gltf_loads.left_rear_engine_light_2,
+            gltf_loads.left_rear_engine_light_3,
+            gltf_loads.left_rear_engine_light_4,
+
+            gltf_loads.right_rear_engine_light_1,
+            gltf_loads.right_rear_engine_light_2,
+            gltf_loads.right_rear_engine_light_3,
+            gltf_loads.right_rear_engine_light_4,
+
+
+            gltf_loads.right_engine,
+            gltf_loads.left_engine,
+            gltf_loads.left_front_engine,
+            gltf_loads.left_wing,
+            gltf_loads.right_front_engine,
+            gltf_loads.right_wing
+
+
+        );
+        //protector_group.rotation.y = -Math.PI / 2;
+        gltf_loads.protector_group.rotation.y = 0;
+        gltf_loads.protector_group.position.y = 0;
+        // protector_group.position.z = 0;
+
+        scene.add(gltf_loads.protector_group);
+
+        //scene.add(boxhelper);
+        gltf_loads.left_front_engine_light_1.material = boxmat_array[0];
+        gltf_loads.left_front_engine_light_2.material = boxmat_array[1];
+        gltf_loads.left_front_engine_light_3.material = boxmat_array[2];
+        gltf_loads.left_front_engine_light_4.material = boxmat_array[3];
+        gltf_loads.left_front_engine_light_5.material = boxmat_array[4];
+        gltf_loads.left_front_engine_light_6.material = boxmat_array[5];
+        gltf_loads.left_front_engine_light_7.material = boxmat_array[6];
+        gltf_loads.left_front_engine_light_8.material = boxmat_array[7];
+
+
+
+        gltf_loads.right_front_engine_light_1.material = boxmat_array[0];
+        gltf_loads.right_front_engine_light_2.material = boxmat_array[1];
+        gltf_loads.right_front_engine_light_3.material = boxmat_array[2];
+        gltf_loads.right_front_engine_light_4.material = boxmat_array[3];
+        gltf_loads.right_front_engine_light_5.material = boxmat_array[4];
+        gltf_loads.right_front_engine_light_6.material = boxmat_array[5];
+        gltf_loads.right_front_engine_light_7.material = boxmat_array[6];
+        gltf_loads.right_front_engine_light_8.material = boxmat_array[7];
+
+
+
+        gltf_loads.left_rear_engine_light_1.material = boxmat_array[0];
+        gltf_loads.left_rear_engine_light_2.material = boxmat_array[1];
+        gltf_loads.left_rear_engine_light_3.material = boxmat_array[2];
+        gltf_loads.left_rear_engine_light_4.material = boxmat_array[3];
+
+        gltf_loads.right_rear_engine_light_1.material = boxmat_array[0];
+        gltf_loads.right_rear_engine_light_2.material = boxmat_array[1];
+        gltf_loads.right_rear_engine_light_3.material = boxmat_array[2];
+        gltf_loads.right_rear_engine_light_4.material = boxmat_array[3];
+
+
+    };
+}
+
+function resizeRendererToDisplaySize(renderer) {
+    const canvas = renderer.domElement;
+    const width = canvas.clientWidth;
+    const height = canvas.clientHeight;
+    const needResize = canvas.width !== width || canvas.height !== height;
+    if (needResize) {
+        renderer.setSize(width, height, false);
+    }
+    return needResize;
+}
+
+
+let laser_returner = () => {
+
+
+
+    laser_group.position.x = cubes[0].position.x;
+    laser_group.cylinder.position.y = cubes[0].position.y;
+    laser_group.position.z = cubes[0].position.z;
+    scene.add(laser_cylinder);
+
+}
+
+
+
+// // onload control area begins .......................................................................................................................................
+var blue_engine_color = new THREE.Color(0x09E0FE);
+var standardColor = new THREE.Color(0xFFFFFF);
+var blackColor = new THREE.Color(0x000000);
+let engine_color_control_counter = 0;
+
+
+var engine_color_control = () => {
+
+    gsap.to([
+        gltf_loads.left_front_engine_light_1.material.color,
+        gltf_loads.left_front_engine_light_2.material.color,
+        gltf_loads.left_front_engine_light_3.material.color,
+        gltf_loads.left_front_engine_light_4.material.color,
+        gltf_loads.left_front_engine_light_5.material.color,
+        gltf_loads.left_front_engine_light_6.material.color,
+        gltf_loads.left_front_engine_light_7.material.color,
+        gltf_loads.left_front_engine_light_8.material.color,
+
+        gltf_loads.right_front_engine_light_1.material.color,
+        gltf_loads.right_front_engine_light_2.material.color,
+        gltf_loads.right_front_engine_light_3.material.color,
+        gltf_loads.right_front_engine_light_4.material.color,
+        gltf_loads.right_front_engine_light_5.material.color,
+        gltf_loads.right_front_engine_light_6.material.color,
+        gltf_loads.right_front_engine_light_7.material.color,
+        gltf_loads.right_front_engine_light_8.material.color,
+
+        gltf_loads.left_rear_engine_light_1.material.color,
+        gltf_loads.left_rear_engine_light_2.material.color,
+        gltf_loads.left_rear_engine_light_3.material.color,
+        gltf_loads.left_rear_engine_light_4.material.color,
+
+        gltf_loads.right_rear_engine_light_1.material.color,
+        gltf_loads.right_rear_engine_light_2.material.color,
+        gltf_loads.right_rear_engine_light_3.material.color,
+        gltf_loads.right_rear_engine_light_4.material.color,
+
+    ],
+
+        {
+            r: blue_engine_color.r,
+            g: blue_engine_color.g,
+            b: blue_engine_color.b,
+            //ease: "elastic",
+            stagger: 0.1
+        });
+
+
+    gsap.to("#collision_div_red", {
+        display: "none",
+        //map: damageTexture,
+        duration: 2
+    });
+    gsap.to("#collision_div_blue", {
+        display: "none",
+        duration: 1
+    });
+    gsap.to("#collision_div_green", {
+        display: "none",
+        duration: 1
+    });
+    engine_color_control_counter += 1;
+}
+
+
+function animate() {
+
+    requestAnimationFrame(animate)
+    const direction = new THREE.Vector3;
+
+    let speed = 1.0;
+
+    points_swarm_size += 1
+
+
+
+
+    gltf_loads.green_mines_array[4].children[5].getWorldDirection(direction);
+
+    gltf_loads.green_mines_array[4].children[5].position.addScaledVector(direction, speed);
+
+
+
+}
+
+// // query selector area begins .....................................................
+
+
+
+let module_score_level_one = 0;
+let collision_count_nose = 0;
+let collision_count_wing = 0;
+
+
+var startup = document.getElementById("c");
+
+
+
+colmiddle1.querySelector("#c").addEventListener('mousemove', function mouse_moved(e) {
+
+
+});
+
+
+let click_counter = 0;
+
+document.querySelector("#c").addEventListener('click', function clicked(e) {
+
+    if (click_counter == 0) {
+        score_update.score_update(module_score_level_one, collision_count_nose, collision_count_wing);
+        engine_color_control();
+        mine_mover_functions.protector_rock_nose();
+
+        const direction = new THREE.Vector3;
+
+        let speed = 1.0;
+        mine_mover_functions.new_mine_number_generator();
+        click_counter += 1;
+    }
+
+
+    $("#trm_name").hide();
+    $("#trm_login_button").hide();
+    $("#name_enter").hide();
+    // $("#trm_blurb").hide();
+
+
+    $("#top_right_menu").hide();
+    $("#top_left_menu").show();
+
+
+});
+
+
+
+document.querySelector("#continue1").addEventListener('click', function () {
+    $("#trm_name").hide();
+    $("#trm_login_button").hide();
+    $("#name_enter").hide();
+
+
+    pause = false;
+    engine_color_control();
+});
+
+document.querySelector("#stop1").addEventListener('click', function () {
+
+
+
+
+    gsap.to([
+        gltf_loads.left_front_engine_light_1.material.color,
+        gltf_loads.left_front_engine_light_2.material.color,
+        gltf_loads.left_front_engine_light_3.material.color,
+        gltf_loads.left_front_engine_light_4.material.color,
+        gltf_loads.left_front_engine_light_5.material.color,
+        gltf_loads.left_front_engine_light_6.material.color,
+        gltf_loads.left_front_engine_light_7.material.color,
+        gltf_loads.left_front_engine_light_8.material.color,
+
+        gltf_loads.right_front_engine_light_1.material.color,
+        gltf_loads.right_front_engine_light_2.material.color,
+        gltf_loads.right_front_engine_light_3.material.color,
+        gltf_loads.right_front_engine_light_4.material.color,
+        gltf_loads.right_front_engine_light_5.material.color,
+        gltf_loads.right_front_engine_light_6.material.color,
+        gltf_loads.right_front_engine_light_7.material.color,
+        gltf_loads.right_front_engine_light_8.material.color,
+
+        gltf_loads.left_rear_engine_light_1.material.color,
+        gltf_loads.left_rear_engine_light_2.material.color,
+        gltf_loads.left_rear_engine_light_3.material.color,
+        gltf_loads.left_rear_engine_light_4.material.color,
+
+        gltf_loads.right_rear_engine_light_1.material.color,
+        gltf_loads.right_rear_engine_light_2.material.color,
+        gltf_loads.right_rear_engine_light_3.material.color,
+        gltf_loads.right_rear_engine_light_4.material.color,
+
+
+
+
+    ],
+        //0.6,
+        {
+            r: blackColor.r,
+            g: blackColor.g,
+            b: blackColor.b,
+            //ease: "elastic",
+            stagger: 0.1,
+        });
+
+
+
+
+    if (!$("#trm_name").val()) {
+        $("#trm_name").show();
+        $("#trm_login_button").show();
+        $("#name_enter").show();
+    }
+
+    pause = true;
+
+    cancelAnimationFrame(mine_mover_functions.mine_mover_1);
+
+});
+document.querySelector("#reset1").addEventListener('click', function () {
+
+    history.go(0);
+
+
+});
+
+
+render();
+
+
+
+
+
+
+

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>three.js webgl - animation - keyframes</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <!-- <link type="text/css" rel="stylesheet" href="./css/main.css"> -->
+    <style>
+        body {
+            background-color: #bfe3dd;
+            color: #000;
+        }
+
+        a {
+            color: #2983ff;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="container"></div>
+
+    <div id="info">
+        <a href="https://threejs.org" target="_blank" rel="noopener">three.js</a> webgl - animation - keyframes<br />
+        Model: <a href="https://www.artstation.com/artwork/1AGwX" target="_blank" rel="noopener">Littlest Tokyo</a> by
+        <a href="https://www.artstation.com/glenatron" target="_blank" rel="noopener">Glen Fox</a>, CC Attribution.
+    </div>
+
+    <script type="module">
+
+        import * as THREE from '../build/three.module.js';
+
+        import Stats from '../examples/jsm/libs/stats.module.js';
+
+        import { OrbitControls } from '../examples/jsm/controls/OrbitControls.js';
+        import { RoomEnvironment } from '../examples/jsm/environments/RoomEnvironment.js';
+
+        import { GLTFLoader } from '../examples/jsm/loaders/GLTFLoader.js';
+        import { DRACOLoader } from '../examples/jsm/loaders/DRACOLoader.js';
+
+       
+            initialize() {
+                // object reference
+                var myscene = this;
+
+                // Load 3D Scene
+                myscene.scene = new THREE.Scene();
+                myscene.scene.background = new THREE.Color(0xf8fafc);
+
+                myscene.renderer = new THREE.WebGLRenderer();
+                myscene.renderer.setPixelRatio(window.devicePixelRatio);
+                myscene.renderer.setSize(window.innerWidth, window.innerHeight);
+                document.body.appendChild(myscene.renderer.domElement);
+
+                // Load Camera Perspektive
+                myscene.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
+                myscene.camera.position.set(50, 0, 0);
+
+                // Load the Orbitcontroller
+                var controls = new THREE.OrbitControls(myscene.camera, myscene.renderer.domElement);
+                controls.enablePan = false;
+                controls.enableZoom = false;
+
+                // Load ambient Light (illuminates every object equally)
+                var ambientLight = new THREE.AmbientLight(0x404040);
+                myscene.scene.add(ambientLight);
+
+                // Add directional light and put into group so it moves with the camera
+                var dirLight = new THREE.DirectionalLight(0xffffff, 1, 100);
+                dirLight.position.set(20, 15, 20);
+                myscene.lightHolder = new THREE.Group();
+                myscene.lightHolder.add(dirLight);
+                myscene.scene.add(myscene.lightHolder);
+
+                // load the mesh, position it and get animations
+                var loader = new GLTFLoader();
+                loader.load('models/cubes.glb', function (gltf) {
+
+                    const scene = gltf.scene;
+                    const clips = gltf.animations;
+                    const mixer = new THREE.AnimationMixer(scene);
+
+                    var action = mixer.clipAction(clips[0]);
+                    action.play();
+
+                    scene.scale.set(1, 1, 1);
+                    scene.position.x = 0;				    //Position (x = right+ left-)
+                    scene.position.y = 7;				    //Position (y = up+, down-)
+                    scene.position.z = 0;				    //Position (z = front +, back-)
+
+                    myscene.scene.add(scene);
+
+                    function animate() {
+                        requestAnimationFrame(animate);
+
+                        myscene.lightHolder.quaternion.copy(myscene.camera.quaternion);
+
+                        myscene.renderer.render(myscene.scene, myscene.camera);
+                    mixer.update(0.01);
+                    }
+
+                    animate();
+
+                }, undefined, function (error) {
+
+                    console.error(error);
+
+                });
+            }
+        }
+
+
+    </script>
+
+</body>
+
+</html>

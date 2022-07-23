@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<!-- <script src='vendor/three.js/build/three.js'></script> -->
+<script src="threex.keyboardstate.js"></script>
+
+<body style='margin: 0px; background-color: #bbbbbb; overflow: hidden;'>
+    <script type="module">
+        import * as THREE from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/build/three.module.js';
+        import { GLTFLoader } from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/examples/jsm/loaders/GLTFLoader.js';
+        import { DragControls } from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/examples/jsm/controls/DragControls.js';
+        import { OrbitControls } from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/examples/jsm/controls/OrbitControls.js';
+        //import  * as THREEx   from './threex.keyboardstate.js';
+
+        import {
+            Group,
+        } from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/build/three.module.js';
+
+        var renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        //var updateFcts = [];
+        var scene = new THREE.Scene();
+        var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 1000);
+        camera.position.z = 3;
+        
+
+         {
+                const color = 0xFFFFFF;
+                const intensity = 1;
+                const light = new THREE.DirectionalLight(color, intensity);
+                light.position.set(-1, 2, 4);
+                const light2 = new THREE.DirectionalLight(color, intensity);
+                light2.position.set(1, -2, 4);
+                scene.add(light, light2);
+            }
+
+            // const Ocontrols = new OrbitControls(camera, );
+            //     //Ocontrols.target.set(0, 5, 0);
+            //     Ocontrols.update();
+
+        
+            let cylinders;
+            
+                    const gltfLoader = new GLTFLoader();
+                    gltfLoader.load('nsea_protector.glb', (gltf) => {
+                        const root = gltf.scene;
+                        root.rotation.x = Math.PI;
+                        root.rotation.z = Math.PI;
+                        cylinders = root.getObjectByName('Cylinder');
+                        
+                        scene.add(root);
+
+                        
+                    });
+                // }
+
+
+       function render(time) {
+            time *= 0.001;
+
+            if (resizeRendererToDisplaySize(renderer)) {
+                const canvas = renderer.domElement;
+                camera.aspect = canvas.clientWidth / canvas.clientHeight;
+                camera.updateProjectionMatrix();
+            }
+
+            if (cylinders){
+
+                scene.add(root);
+            }
+
+
+
+            renderer.render(scene, camera);
+
+            requestAnimationFrame(render);
+        }
+
+    </script>
+</body>

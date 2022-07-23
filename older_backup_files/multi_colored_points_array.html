@@ -1,0 +1,92 @@
+<html>
+
+<head>
+
+
+    <style>
+        body {
+            width: 100vw;
+            height: 100vh;
+        }
+    </style>
+
+</head>
+
+
+<body>
+
+    <script type="module">
+        import * as THREE from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/build/three.module.js';
+        import { GLTFLoader } from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/examples/jsm/loaders/GLTFLoader.js';
+        import * as tweenMax from 'https://cdnjs.cloudflare.com/ajax/libs/gsap/2.1.3/TweenMax.min.js';
+        import { OrbitControls } from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/examples/jsm/controls/OrbitControls.js';
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        //const textloader = new THREE.TextureLoader();
+
+        const texloader = new THREE.TextureLoader();
+        const bgTexture = texloader.load('./images/red_dwarf_stars.png');
+        const clock = new THREE.Clock();
+
+
+
+        const colorArray = [new THREE.Color(0xff0000), new THREE.Color(0x00ff00), new THREE.Color(0x0000ff)];
+        const positions = [];
+        const colors = [];
+
+        for (let i = 0; i < 100; i++) {
+
+            positions.push(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5);
+
+            const clr = colorArray[Math.floor(Math.random() * colorArray.length)];
+
+            colors.push(clr.r, clr.g, clr.b);
+
+        }
+
+        const geometry = new THREE.BufferGeometry();
+        geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+        geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+
+        const material = new THREE.PointsMaterial({ 
+            size: 4, vertexColors: true, depthTest: false, sizeAttenuation: false });
+
+        const mesh = new THREE.Points(geometry, material);
+        scene.add(mesh);
+        const animate = function () {
+            requestAnimationFrame(animate);
+
+
+            mesh.rotation.x += 0.0001;
+            mesh.rotation.y += 0.0001;
+            mesh.rotation.z += 0.0001;
+
+            //particlesMesh.translateZ(0.01);
+            //particlesMesh.translateY(0.01);
+            //particlesMesh.translateX(0.01);
+
+
+            renderer.render(scene, camera);
+        };
+
+        animate();
+
+
+
+    </script>
+
+
+
+</body>
+
+
+
+
+
+
+</html>

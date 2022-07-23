@@ -1,0 +1,124 @@
+<html>
+
+<head>
+
+
+<style>
+
+
+
+</style>
+
+</head>
+
+
+<body>
+<a
+    href="https://www.blender-models.com/model-downloads/particle-effects/id/twisting-exploding-sphere-thing-explode-modifier-test/">twisting
+    exploding sphere thing… “explode” modifier test 3D Model</a>
+<script type="module">
+    import * as THREE from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/build/three.module.js';
+    import { GLTFLoader } from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/examples/jsm/loaders/GLTFLoader.js';
+    import * as tweenMax from 'https://cdnjs.cloudflare.com/ajax/libs/gsap/2.1.3/TweenMax.min.js';
+    import { OrbitControls } from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/examples/jsm/controls/OrbitControls.js';
+    
+
+    var scene, scene2 = null;
+    var camera, camera2 = null;
+    var renderer = null;
+    var mixer, mixer2 = null;
+    var clock = new THREE.Clock();
+
+    
+    function init3D() {
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+
+            renderer = new THREE.WebGLRenderer();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.body.appendChild(renderer.domElement);
+
+            var ambientLight = new THREE.AmbientLight(0x080818);
+            scene.add(ambientLight);
+
+            var pointLight = new THREE.PointLight(0xffffff, 1, 100);
+            pointLight.position.set(-5, 1, 5);
+            scene.add(pointLight);
+
+            camera.position.z = 5;
+            camera.position.y = 1.5;
+        }
+        
+
+
+    function loadScene() {
+        // Instantiate a loader
+        const gltfLoader = new GLTFLoader();
+
+        // Load a glTF resource
+        //gltfLoader.load('cube_move.glb',
+        gltfLoader.load('cube_particles_1.glb',
+
+            function (gltf) {
+                var model = gltf.scene;
+                gltf.animations;
+                scene.add(model);
+                
+
+                mixer = new THREE.AnimationMixer(model);
+                //mixer.clipAction(gltf.animations[0]).startAt(9);
+                mixer.clipAction(gltf.animations[0]).play();
+                //mixer.scale.x = 0.5;
+                console.log(gltf.scene);
+                console.log(gltf.animations[1]);
+
+                render();
+            });
+             // Load a glTF resource
+        // gltfLoader.load('cube_move_2.glb',
+        //     function (gltf) {
+        //         var model2 = gltf.scene;
+        //         gltf.animations;
+        //         scene.add(model2);
+
+
+        //         mixer2 = new THREE.AnimationMixer(model2);
+        //         mixer2.clipAction(gltf.animations[0]).play();
+        //         //mixer.scale.x = 0.5;
+
+        //         render();
+        //     });
+    }
+    
+
+    function render() {
+        requestAnimationFrame(render);
+        var delta = clock.getDelta();
+        
+        if (mixer != null) {
+            mixer.update(delta);
+           // mixer.clipAction(gltf.animations[0]).play();
+            
+        };
+        renderer.render(scene, camera);
+    }
+
+    init3D();
+   
+
+    loadScene();
+    
+
+    
+</script>
+
+
+
+</body>
+
+
+
+
+
+
+</html>

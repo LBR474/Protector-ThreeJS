@@ -1,0 +1,174 @@
+<html>
+
+<head>
+
+
+    <style>
+        html,
+        body {
+            margin: 0;
+            height: 100%;
+        }
+
+        #c {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        #d {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+    </style>
+
+</head>
+
+
+<body>
+
+    <canvas id="c" name="c"></canvas>
+    <canvas id="d" name="d"></canvas>
+
+    <script type="module">
+        import * as THREE from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/build/three.module.js';
+
+        function explosion_main() {
+            const canvas = document.querySelector('#c');
+            const renderer = new THREE.WebGLRenderer({ canvas });
+
+            const fov = 75;
+            const aspect = 2;  // the canvas default
+            const near = 0.1;
+            const far = 5;
+            const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
+            camera.position.z = 2;
+
+            const scene = new THREE.Scene();
+
+            {
+                const color = 0xFFFFFF;
+                const intensity = 1;
+                const light = new THREE.DirectionalLight(color, intensity);
+                light.position.set(-1, 2, 4);
+                scene.add(light);
+            }
+
+            const exp_cube_Width = 0.1;
+            const exp_cube_Height = 0.11;
+            const exp_cube_Depth = 0.11;
+            const exp_cube_array = [];
+            
+            const texloader = new THREE.TextureLoader();
+            const exp_cube_geometry = new THREE.BoxGeometry(
+                
+            exp_cube_Width, exp_cube_Height, exp_cube_Depth);
+
+
+            function makeInstance(geometry, color, x, y) {
+                const material = new THREE.MeshBasicMaterial({ 
+                    color: 0xFF0000,
+               map: texloader.load('../examples/textures/lava/lavatile.jpg')
+             });
+
+                const cube = new THREE.Mesh(exp_cube_geometry, material);
+                scene.add(cube);
+
+                cube.position.x = x;
+                cube.position.y = y;
+                exp_cube_array.push(cube);
+                
+                
+
+                //return cube;
+            }
+            
+            let cos_divider = 48;
+            let sin_divider = 48;
+            let index = 1;
+            
+            let lotsa_cubes = () => {
+                for (index = 1; index < 49; index++) {
+                    makeInstance(exp_cube_geometry, 0x44aa88,
+                        (Math.cos((2 * Math.PI * index) / cos_divider)) * 0.01,
+                        (Math.sin((2 * Math.PI * index) / sin_divider)) * 0.01
+                        );
+
+                }
+            }
+            lotsa_cubes();
+            
+
+            function resizeRendererToDisplaySize(renderer) {
+                const canvas = renderer.domElement;
+                const width = canvas.clientWidth;
+                const height = canvas.clientHeight;
+                const needResize = canvas.width !== width || canvas.height !== height;
+                if (needResize) {
+                    renderer.setSize(width, height, false);
+                }
+                return needResize;
+            }
+
+            function explosion_render(time) {
+                time *= 0.001;
+                
+                if (resizeRendererToDisplaySize(renderer)) {
+                    const canvas = renderer.domElement;
+                    camera.aspect = canvas.clientWidth / canvas.clientHeight;
+                    camera.updateProjectionMatrix();
+                }
+
+
+                exp_cube_array.forEach((cube, ndx) => {
+                    const speed = 1 + ndx * .1;
+                    const rot = time * speed;
+                    // cube.rotation.x = rot;
+                    // cube.rotation.y = rot;
+                    scene.updateMatrixWorld(true);
+                    var position_matrix = new THREE.Vector3();
+                   
+                    
+                    position_matrix.setFromMatrixPosition(exp_cube_array[ndx].matrixWorld);
+                    
+                   if (time > 2.8) {
+                      scene.remove(cube); 
+                   } else {
+                     cube.position.x = position_matrix.x * 1.1;
+
+                       cube.position.y = position_matrix.y * 1.1;  
+                   }
+                    
+                   
+
+                    
+                    
+
+                });
+
+                renderer.render(scene, camera);
+
+                requestAnimationFrame(explosion_render);
+            }
+
+            requestAnimationFrame(explosion_render);
+        }
+
+        explosion_main();
+
+
+    </script>
+
+
+
+</body>
+
+
+
+
+
+
+</html>

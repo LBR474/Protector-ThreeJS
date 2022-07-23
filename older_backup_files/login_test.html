@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            var name = $("#name").val();
+            $("button").click(function () {
+                $.post("connection.php",
+                    {
+                        name,
+                        city: "Duckburg"
+                    },
+                    function (data, status) {
+
+                        document.querySelector("#demo").innerHTML = 
+                        (data + "\n Status: " + status);
+                    });
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <p id="demo"> </p>
+        <input type="text" id="name" value="newuser">
+    <button>Send an HTTP POST request to a page and get the result back</button>
+
+</body>
+
+</html>

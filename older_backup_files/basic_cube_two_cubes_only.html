@@ -1,0 +1,177 @@
+<html>
+
+<head>
+
+
+<style>
+
+html, body {
+   margin: 0;
+   height: 100%;
+}
+#c {
+    position: absolute;
+   width: 100%;
+   height: 100%;
+   display: block;
+}
+#d {
+    position: absolute;
+   width: 100%;
+   height: 100%;
+   display: block;
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+<canvas id="c" name="c"></canvas>
+<canvas id="d" name="d"></canvas>
+
+<script type="module">
+ import * as THREE from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/build/three.module.js';
+    import { GLTFLoader } from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/examples/jsm/loaders/GLTFLoader.js';
+
+    function main() {
+        const canvas = document.querySelector('#c');
+        const renderer = new THREE.WebGLRenderer({ canvas });
+
+        const fov = 75;
+        const aspect = 2;  // the canvas default
+        const near = 0.1;
+        const far = 5;
+        const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
+        camera.position.z = 2;
+
+        const scene = new THREE.Scene();
+
+        {
+            const color = 0xFFFFFF;
+            const intensity = 1;
+            const light = new THREE.DirectionalLight(color, intensity);
+            light.position.set(-1, 2, 4);
+            scene.add(light);
+        }
+
+        const boxWidth = 1;
+        const boxHeight = 1;
+        const boxDepth = 1;
+        const geometry = new THREE.BoxGeometry(boxWidth, boxHeight, boxDepth);
+
+        function makeInstance(geometry, color, x) {
+            const material = new THREE.MeshPhongMaterial({ color });
+
+            const cube = new THREE.Mesh(geometry, material);
+            scene.add(cube);
+
+            cube.position.x = x;
+
+            return cube;
+        }
+
+        const cubes = [
+            //makeInstance(geometry, 0x44aa88, 0),
+            makeInstance(geometry, 0x8844aa, -2),
+            makeInstance(geometry, 0xaa8844, 2),
+        ];
+        let root, cylinders;
+        var y_pos = 0;
+        var y_pos_ender = 0.1;
+         // Instantiate a loader
+       const gltfloader = new GLTFLoader();
+        gltfloader.load(
+            // resource URL
+            'nsea_protector.glb',
+            // called when the resource is loaded
+            function (gltf) {
+                root = gltf.scene;
+                cylinders = root.getObjectByName('Cylinder');
+                scene.add(gltf.scene);
+                root.rotation.x = Math.PI;
+                root.rotation.z = Math.PI;
+                console.log(root.position.y);
+
+
+
+
+
+
+            });
+        function resizeRendererToDisplaySize(renderer) {
+            const canvas = renderer.domElement;
+            const width = canvas.clientWidth;
+            const height = canvas.clientHeight;
+            const needResize = canvas.width !== width || canvas.height !== height;
+            if (needResize) {
+                renderer.setSize(width, height, false);
+            }
+            return needResize;
+        }
+
+        function render(time) {
+            time *= 0.001;
+
+            if (resizeRendererToDisplaySize(renderer)) {
+                const canvas = renderer.domElement;
+                camera.aspect = canvas.clientWidth / canvas.clientHeight;
+                camera.updateProjectionMatrix();
+            }
+
+            cubes.forEach((cube, ndx) => {
+                const speed = 1 + ndx * .1;
+                const rot = time * speed;
+                cube.rotation.x = rot;
+                cube.rotation.y = rot;
+            });
+             if (cylinders) {
+                for (const protector of cylinders.children) {
+
+                    var scale_factor = 0.05;
+
+                    protector.scale.x = scale_factor;
+                    protector.scale.y = scale_factor;
+                    protector.scale.z = scale_factor;
+
+                    protector.position.y = y_pos;
+
+                    y_pos += 0.001;
+                    if (y_pos > y_pos_ender) {
+                        y_pos = y_pos_ender;
+                        //render(time);
+                    }
+
+                }
+
+
+
+                }
+
+
+            renderer.render(scene, camera);
+
+            requestAnimationFrame(render);
+        }
+
+        requestAnimationFrame(render);
+    }
+
+    main();
+
+
+
+</script>
+
+
+
+</body>
+
+
+
+
+
+
+</html>

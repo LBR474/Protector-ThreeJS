@@ -1,0 +1,157 @@
+<html>
+
+<head>
+
+
+<style>
+html, body {
+  height: 100%;
+  margin: 0;
+}
+#c {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+
+
+</style>
+
+</head>
+
+
+<body>
+<canvas id="c" tabindex="1"></canvas>
+
+<script type="module">
+
+    import * as THREE from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/build/three.module.js';
+        import { OrbitControls } from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/examples/jsm/controls/OrbitControls.js';
+        import { GLTFLoader } from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/examples/jsm/loaders/GLTFLoader.js';
+
+  
+    function main() {
+        const canvas = document.querySelector('#c');
+        const renderer = new THREE.WebGLRenderer({ canvas });
+
+        const fov = 75;
+        const aspect = 2;  // the canvas default
+        const near = 0.1;
+        const far = 5;
+        const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
+        camera.position.z = 2;
+
+        const controls = new OrbitControls(camera, canvas);
+        controls.target.set(0, 0, 0);
+        controls.update();
+
+        const scene = new THREE.Scene();
+
+        {
+            const color = 0xFFFFFF;
+            const intensity = 1;
+            const light = new THREE.DirectionalLight(color, intensity);
+            light.position.set(0, 4, 6);
+            scene.add(light);
+        }
+         
+         
+
+
+        const Pyramid_Top_Width = 0;
+        const Pyramid_Bottom_Width = 1;
+        const Pyramid_Height = 1;
+        const Pyramid_Segments = 3
+        const geometry = new THREE.CylinderGeometry(Pyramid_Top_Width, Pyramid_Bottom_Width, Pyramid_Height, Pyramid_Segments);
+
+        function makeInstance(geometry, color, x) {
+            const loader = new THREE.TextureLoader();
+            //const texture = loader.load('../textures/colors.png');
+            
+            //const material = new THREE.MeshPhongMaterial({ map: texture });
+            //const material = new THREE.MeshPhongMaterial({ color });
+            //const loader = new THREE.TextureLoader();
+
+            const material = new THREE.MeshBasicMaterial({
+                map: loader.load('https://threejsfundamentals.org/threejs/resources/images/wall.jpg'),
+            });
+            const cube = new THREE.Mesh(geometry, material);
+            scene.add(cube);
+
+            cube.position.x = x;
+
+            return cube;
+        }
+        const Pyramids = [
+        makeInstance(geometry, 0x44aa88, 0),
+        makeInstance(geometry, 0x8844aa, -2),
+        makeInstance(geometry, 0xaa8844, 2),
+        ];
+
+        
+
+        function resizeRendererToDisplaySize(renderer) {
+            const canvas = renderer.domElement;
+            const width = canvas.clientWidth;
+            const height = canvas.clientHeight;
+            const needResize = canvas.width !== width || canvas.height !== height;
+            if (needResize) {
+                renderer.setSize(width, height, false);
+            }
+            return needResize;
+        }
+
+        function render(time) {
+            time *= 0.001;  // convert time to seconds
+            if (resizeRendererToDisplaySize(renderer)) {
+                const canvas = renderer.domElement;
+                camera.aspect = canvas.clientWidth / canvas.clientHeight;
+                camera.updateProjectionMatrix();
+            }
+           
+            renderer.render(scene, camera);
+             Pyramids.forEach((mine, ndx) => {
+                const speed = 0.1 + ndx * 0.1;
+                const rot = time * speed;
+                mine.rotation.x = rot;
+                mine.rotation.y = rot;
+
+            });
+             //renderer.render(scene, camera);
+             //requestAnimationFrame(render);
+            
+        }
+        render();
+
+        controls.addEventListener('change', render);
+        window.addEventListener('resize', render);
+
+        // note: this is a workaround for an OrbitControls issue
+        // in an iframe. Will remove once the issue is fixed in
+        // three.js
+        window.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            window.focus();
+        });
+        window.addEventListener('keydown', (e) => {
+            e.preventDefault();
+        });
+    }
+
+    main();
+
+
+    
+</script>
+
+
+
+</body>
+
+
+
+
+
+
+</html>

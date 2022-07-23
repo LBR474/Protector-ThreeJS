@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>My first three.js app</title>
+	<style>
+		body {
+			margin: 0;
+		}
+	</style>
+</head>
+
+<body>
+	<!-- <script src="js/three.js"></script> -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.8.0/gsap.min.js"></script>
+
+	<script type="importmap">
+					{
+						"imports": {
+							"three": "../build/three.module.js"
+						}
+					}
+				</script>
+
+	<script type="module">
+
+		import * as THREE from 'https://cdn.skypack.dev/three@0.120.0'
+
+		import * as OrbitControls from 'https://cdn.skypack.dev/three@0.120.0/examples/jsm/controls/OrbitControls.js'
+
+		import { GLTFLoader } from 'https://cdn.skypack.dev/three@0.120.0/examples/jsm/loaders/GLTFLoader.js';
+		//import { RGBELoader } from './jsm/loaders/RGBELoader.js';
+
+		const scene = new THREE.Scene();
+		const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+
+		const renderer = new THREE.WebGLRenderer();
+		renderer.setSize(window.innerWidth, window.innerHeight);
+		document.body.appendChild(renderer.domElement);
+
+		scene.background = new THREE.Color(0xFFFFFF)
+
+		let root
+		let roots = []
+
+
+		const loader = new GLTFLoader();
+		// Optional: Provide a DRACOLoader instance to decode compressed mesh data
+		// const dracoLoader = new DRACOLoader();
+		// dracoLoader.setDecoderPath('../examples/js/libs/draco/');
+		// loader.setDRACOLoader(dracoLoader);
+
+
+		const cube = // Instantiate a loader
+
+
+
+
+			// Load a glTF resource
+			loader.load(
+				// resource URL
+				'tothian_mine_extra_red_small.glb',
+				// called when the resource is loaded
+				function (gltf) {
+
+					scene.add(gltf.scene);
+
+					root = gltf.scene
+
+
+					roots.push(root)
+					console.log(roots)
+
+					root.scale.x = 5;
+					root.scale.y = 5;
+					root.scale.z = 5;
+
+
+					// gltf.animations; // Array<THREE.AnimationClip>
+					// gltf.scene; // THREE.Group
+					// gltf.scenes; // Array<THREE.Group>
+					// gltf.cameras; // Array<THREE.Camera>
+					// gltf.asset; // Object
+
+					//return root
+
+				},
+
+
+				// called while loading is progressing
+				function (xhr) {
+
+					console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+					if (
+						(xhr.loaded / xhr.total * 100) >= 1
+					) {
+
+
+
+						animate();
+						//console.log(xhr)
+					}
+
+				},
+				// called when loading has errors
+				function (error) {
+
+					console.log('An error happened');
+
+				}
+			);
+
+
+
+		camera.position.z = 5;
+
+		//scene.add(cube);
+
+		let animate_counter = 0
+
+		function animate() {
+
+
+			requestAnimationFrame(animate);
+
+
+			if (roots[0]) {
+				if (animate_counter == 0) {
+					roots[0].children[7].material.transparent = true
+					roots[0].children[1].material.transparent = true
+					roots[0].children[7].material.emission = 0xFF0000
+					roots[0].children[7].material.emissiveintensity = 7
+					//console.log("claaed")
+
+				}
+				animate_counter += 1
+				//roots[0].children[7].material.transparent = true
+				//roots[0].children[5].rotation.y += 0.1
+
+				// gsap.to(roots[0].children[1].position, 3, {
+				// 	x: 0.5,
+
+				// 	//onComplete: mine_piece_remove,
+				// 	ease: "back.Out",
+
+				// });
+				gsap.to(roots[0].children[7].scale, 5, {
+					x: 12,
+					y: 12,
+					z: 12,
+
+					//onComplete: mine_piece_remove,
+					ease: "bounce.InOut",
+
+				});
+				gsap.to(roots[0].children[7].material, 6.95, {
+					opacity: 0.0,
+
+					//onComplete: mine_piece_remove,
+					ease: "bounce.Out",
+
+				});
+				gsap.to(roots[0].children[0].scale, 4, {
+					x: 0.01,
+					y: 0.01,
+					z: 0.01,
+
+					//onComplete: mine_piece_remove,
+					ease: "elastic.InOut",
+
+				});
+				gsap.to(roots[0].children[5].scale, 4, {
+					x: 0.01,
+					y: 0.01,
+					z: 0.01,
+
+					//onComplete: mine_piece_remove,
+					ease: "bounce.Out",
+
+				});
+				gsap.to(roots[0].children[6].scale, 4, {
+					x: 0.01,
+					y: 0.01,
+					z: 0.01,
+
+					onComplete: mine_piece_remove,
+					ease: "back.Out",
+
+				});
+				//return
+			}
+
+
+			renderer.render(scene, camera);
+		};
+		function mine_piece_remove() {
+
+			scene.remove(roots[0])
+			return
+		}
+
+
+
+
+	</script>
+</body>
+
+</html>

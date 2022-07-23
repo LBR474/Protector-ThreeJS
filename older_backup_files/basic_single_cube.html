@@ -1,0 +1,96 @@
+
+
+<html>
+
+<head>
+<style>
+
+
+    #c{
+        width: 100%;
+        height: 80%;
+    }
+</style>
+
+</head>
+
+<body>
+<canvas id="c"></canvas>
+</body>
+
+
+<script type="module">
+
+import * as THREE from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/build/three.module.js';
+    import { GLTFLoader } from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/examples/jsm/loaders/GLTFLoader.js';
+  let protector;
+  const protector_cylinders = [];
+function main() {
+  const canvas = document.querySelector('#c');
+  const renderer = new THREE.WebGLRenderer({canvas});
+  const gltfLoader = new GLTFLoader();
+  //canvas.color(0x44aa88);
+
+  const fov = 75;
+  const aspect = 2;  // the canvas default
+  const near = 0.1;
+  const far = 5;
+  const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
+  camera.position.z = 2;
+
+  const scene = new THREE.Scene();
+
+  const boxWidth = 1;
+  const boxHeight = 1;
+  const boxDepth = 1;
+  const geometry = new THREE.BoxGeometry(boxWidth, boxHeight, boxDepth);
+
+  const material = new THREE.MeshBasicMaterial({color: 0x44aa88});  // greenish blue
+
+  const cube = new THREE.Mesh(geometry, material);
+//scene.add(cube);
+  
+  gltfLoader.load(
+    // resource URL
+    'nsea_protector_hull_base_3.glb',
+    // called when the resource is loaded
+    function (gltf) {
+      protector = gltf.scene;
+      protector_cylinders.push(protector);
+      protector.rotation.y = Math.PI;
+      protector.position.y = -0.45;
+      //scene.add(gltf.scene);
+      scene.add(protector);
+
+
+
+
+    },
+
+
+  );
+            //scene.add(protector_cylinders[0]);
+
+    
+  
+
+  function render(time) {
+    time *= 0.001;  // convert time to seconds
+
+     //cube.rotation.x = time;
+     protector_cylinders[0].rotation.y = time;
+
+    renderer.render(scene, camera);
+
+    requestAnimationFrame(render);
+  }
+
+  
+  requestAnimationFrame(render);
+
+}
+
+main();
+    
+
+</script>

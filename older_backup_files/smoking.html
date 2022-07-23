@@ -1,0 +1,91 @@
+<html>
+
+<head>
+
+
+<style>
+
+
+
+</style>
+
+</head>
+
+
+<body>
+<div class="header">
+<div class="links"></div>
+<div class="link">Link 1</div>
+<div class="link">Link 2</div>
+<div class="link">Link 3</div>
+
+</div>
+<div class="content">
+    <div class="sidebar left"></div>
+    <div class="button">Reverse</div>
+    <div class="sidebar right"></div>
+</div>
+<div class="footer"></div>
+<script type="module">
+    import * as THREE from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/build/three.module.js';
+    import { GLTFLoader } from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/examples/jsm/loaders/GLTFLoader.js';
+    import * as tweenMax from 'https://cdnjs.cloudflare.com/ajax/libs/gsap/2.1.3/TweenMax.min.js';
+    import { OrbitControls } from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/examples/jsm/controls/OrbitControls.js';
+    var loader = new THREE.TextureLoader();
+    var url = './images/andromeda_pic.png';
+    var texture = loader.load(url);
+
+    var particleGroupCrash = new THREE.Group({
+        texture: {
+            value: texture
+        },
+        blending: THREE.NormalBlending
+    });
+
+    var crashemitter = new SPE.Emitter({
+
+        maxAge: { value: 12 },
+        position: {
+            value: new THREE.Vector3(0, 0, 0),
+            spread: new THREE.Vector3(1, 0.5, 2),
+        },
+        size: {
+            value: [2, 8],
+            spread: [0, 1, 2]
+        },
+        acceleration: {
+            value: new THREE.Vector3(0, 0, 0),
+        },
+        rotation: {
+            axis: new THREE.Vector3(0, 1, 0),
+            spread: new THREE.Vector3(0, 20, 0),
+            angle: 100 * Math.PI / 180,
+        },
+        velocity: {
+            value: new THREE.Vector3(0, 1, -0.5),
+            spread: new THREE.Vector3(0.25, 0.1, 0.25)
+        },
+        opacity: {
+            value: [0.2, 0.5, 0]
+        },
+        color: {
+            value: [new THREE.Color(0x333333), new THREE.Color(0x111111)],
+            spread: [new THREE.Vector3(0.2, 0.1, 0.1), new THREE.Vector3(0, 0, 0)]
+        },
+        particleCount: 600,
+    });
+
+   
+    
+</script>
+
+
+
+</body>
+
+
+
+
+
+
+</html>

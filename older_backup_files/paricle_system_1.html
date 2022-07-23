@@ -1,0 +1,71 @@
+<html>
+
+<head>
+
+
+    <style>
+body {
+    width: 100vw;
+    height: 100vh;
+}
+
+
+    </style>
+
+</head>
+
+
+<body>
+    
+    <script type="module">
+        import * as THREE from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/build/three.module.js';
+        import { GLTFLoader } from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/examples/jsm/loaders/GLTFLoader.js';
+        import * as tweenMax from 'https://cdnjs.cloudflare.com/ajax/libs/gsap/2.1.3/TweenMax.min.js';
+        import { OrbitControls } from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/examples/jsm/controls/OrbitControls.js';
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+    let particleCount = 1800,
+        particles = new THREE.PointsGeometry();
+    var pMaterial = new THREE.ParticleBasicMaterial({ color: 0xFFFFFF, size: 0.5 });
+
+    for (var i = 0; i < particleCount; i++) {
+        var pX = Math.random() * 500 - 250,
+            pY = Math.random() * 500 - 250,
+            pZ = Math.random() * 500 - 250,
+            particle = new THREE.Vector3(pX, pY, pZ);
+
+        particles.vertices.push(particle);
+    }
+
+    particleSystem = new THREE.ParticleSystem(particles, pMaterial);
+    scene.add(particleSystem);
+        
+
+    function animate() {
+        requestAnimationFrame(animate);
+        renderer.render(scene, camera);
+
+        var pCount = particleCount;
+        while (pCount--) {
+            var particle = particles.vertices[pCount];
+            particle.y = Math.random() * 500 - 250;
+            particleSystem.geometry.vertices.needsUpdate = true;
+        }
+
+    }
+    </script>
+
+
+
+</body>
+
+
+
+
+
+
+</html>

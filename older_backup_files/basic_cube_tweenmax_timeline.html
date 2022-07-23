@@ -1,0 +1,117 @@
+<html>
+
+<head>
+    <title>My first three.js app</title>
+    <style>
+        body {
+            margin: 0;
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%
+        }
+    </style>
+</head>
+
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/2.1.2/TweenMax.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/2.0.1/TweenLite.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/2.0.1/TimelineMax.min.js"></script>
+    <script type="module">
+
+
+
+
+        import * as THREE from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/build/three.module.js';
+        import { OrbitControls } from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/examples/jsm/controls/OrbitControls.js';
+        import { GLTFLoader } from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/examples/jsm/loaders/GLTFLoader.js';
+        import * as SkeletonUtils from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/examples/jsm/utils/SkeletonUtils.js';
+
+        //  import * as TweenMax from 'https://cdnjs.cloudflare.com/ajax/libs/gsap/2.1.3/TweenMax.min.js';
+        //         //import * as gsap from 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.8.0/gsap.min.js';
+        //         import * as TimelineMax from 'https://cdnjs.cloudflare.com/ajax/libs/gsap/2.0.1/TimelineMax.min.js';
+
+
+
+
+        //https://cdnjs.cloudflare.com/ajax/libs/gsap/3.8.0/gsap.min.js
+        var scene = new THREE.Scene();
+        var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+         // lights area begins .....................................................
+        {
+            const color = 0xFFFFFF;
+            const intensity = 1;
+            const light = new THREE.DirectionalLight(color, intensity);
+            light.position.set(-1, 2, 4);
+            const light2 = new THREE.DirectionalLight(color, intensity);
+            light2.position.set(-100, 10, -100);
+            light2.target.position.set(0, 10, -100);
+            scene.add(light, light2);
+            scene.add(light2.target);
+        }
+
+        var renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        var geometry = new THREE.BoxGeometry(1, 1, 1);
+        var material = new THREE.MeshLambertMaterial({ color: 0x00ff00 });
+        var cube = new THREE.Mesh(geometry, material);
+        scene.add(cube);
+        camera.position.z = 5;
+         var tl = new TimelineMax();
+
+
+
+            tl.to(cube, 2, { y: 30 });
+
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+
+        function onMouseMove(event) {
+
+           
+
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
+
+       
+        
+        event.preventDefault();
+        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+        mouse.y = (event.clientY / window.innerHeight) * 2 + 1;
+
+        
+        }
+         raycaster.setFromCamera(mouse, camera);
+
+            // calculate objects intersecting the picking ray
+            const intersects = raycaster.intersectObjects(scene.children, true);
+           
+            for (let i = 0; i < intersects.length; i++) {
+                
+                intersects[i].object.material.color.set('red');
+
+            }
+       
+            window.addEventListener('mousemove', onMouseMove, true);
+
+
+
+        var animate = function () {
+            requestAnimationFrame(animate);
+
+          
+            renderer.render(scene, camera);
+
+        };
+        
+       
+        animate();
+
+       
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>My first three.js app</title>
+    <style>
+        body {
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <script type="module">
+
+
+        import * as THREE from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/build/three.module.js';
+        import { OrbitControls } from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/examples/jsm/controls/OrbitControls.js';
+        import { GLTFLoader } from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/examples/jsm/loaders/GLTFLoader.js';
+
+   
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+       
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+        
+        const Cylgeometry = new THREE.CylinderGeometry(0,1,1,3);
+        
+        
+        const loadManager = new THREE.LoadingManager();
+            const loader = new THREE.TextureLoader(loadManager);
+
+            var borderMaterial = new THREE.MeshBasicMaterial({
+                //color: 0xffffff
+                color: 'black'
+            });
+            var faceMaterial = new THREE.MeshBasicMaterial({
+                   map: loader.load('red_mine_small.png'),
+                    //color: 0x000000
+                });
+                 var sideMaterial = new THREE.MeshBasicMaterial({
+                        //map: loader.load('red_mine_small.png'),
+                    color: 'red'
+                        //color: 0x000000
+                    });
+
+            var materials = [
+                faceMaterial,
+                borderMaterial, // Bottom side --> THIS IS THE BACK
+                sideMaterial, 
+                
+            ];
+       const cylinders = [];
+       
+       
+        let cylinder_name;
+       
+           for (let j = -200; j < 200; j += 20) {
+               for (let i = -200; i < 200; i += 20) {
+            cylinder_name = i;
+           
+           cylinder_name = new THREE.Mesh(Cylgeometry, materials);
+           
+
+          
+           cylinder_name.name = "Cylinder" + i;
+           cylinder_name.position.x = i;
+           cylinder_name.position.y = j;
+           cylinder_name.position.z = -100 + Math.random() * -200;
+
+           cylinders.push(cylinder_name);
+
+           scene.add(cylinder_name);
+          
+           
+       }
+    }
+
+    
+       
+
+
+        camera.position.z = 5;
+        
+
+
+        const animate = function () {
+            
+            requestAnimationFrame(animate);
+            //cube.position.z += 1;
+            cylinders.forEach(cylinder => {
+                
+                cylinder.rotation.x += 0.01;
+                
+                cylinder.rotation.y += 0.01;
+               
+            });
+            
+            renderer.render(scene, camera);
+        };
+
+        animate();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,103 @@
+<html>
+
+<body>
+
+    <!-- //<script src="Three.js"></script> -->
+    <script type="module">
+        import * as THREE from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/build/three.module.js';
+            import { GLTFLoader } from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/examples/jsm/loaders/GLTFLoader.js';
+
+        var color = 0x000000;
+       let root;
+       
+        // Create your main scene
+        var scene = new THREE.Scene();
+
+        // Create your main camera
+        var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+
+        // Create lights
+        var light = new THREE.PointLight(0xEEEEEE);
+        light.position.set(20, 0, 20);
+        scene.add(light);
+
+        var lightAmb = new THREE.AmbientLight(0x777777);
+        scene.add(lightAmb);
+
+        // Create your renderer
+        var renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+         // Instantiate a loader
+            const loader = new GLTFLoader();
+
+            loader.load(
+                    // resource URL
+                    'nsea_protector.glb',
+                    // called when the resource is loaded
+                    function (gltf) {
+                        var root = gltf.scene;
+                        scene.add(root);
+                        
+                        gltf.animations; // Array<THREE.AnimationClip>
+                        gltf.scene; // THREE.Group
+                        gltf.scenes; // Array<THREE.Group>
+                        gltf.cameras; // Array<THREE.Camera>
+                        gltf.asset; // Object
+                        //return root;
+                            console.log(root.children[2]);
+                    },
+                    
+                );
+
+        // Set up the main camera
+        camera.position.z = 5;
+
+        // Load the background texture
+        var texture = new THREE.TextureLoader().load('./images/extra_stars_pic.jpg');
+        var backgroundMesh = new THREE.Mesh(
+            new THREE.PlaneGeometry(2, 2),
+            new THREE.MeshBasicMaterial({
+                map: texture
+            }));
+
+        backgroundMesh.material.depthTest = false;
+        backgroundMesh.material.depthWrite = false;
+
+        // Create your background scene
+        var backgroundScene = new THREE.Scene();
+        var backgroundCamera = new THREE.Camera();
+        backgroundScene.add(backgroundCamera);
+        backgroundScene.add(backgroundMesh);
+        
+            
+        // Rendering function
+        var render = function () {
+            requestAnimationFrame(render);
+
+            // Update the color to set
+            if (color < 0xdddddd) color += 0x0000ff;
+
+            //Update the cube color
+            //cube.material.color.setHex(color);
+            //root.rotateX(Math.PI/2);
+            // Update the cube rotations
+            
+            cube.rotation.y += 0.02;
+
+            renderer.autoClear = false;
+            renderer.clear();
+            renderer.render(backgroundScene, backgroundCamera);
+            renderer.render(scene, camera);
+        };
+     // console.log(root.children[2]);
+        render();
+        
+    </script>
+</body>
+
+</html>
+**Demo right here **
+
+Hope this helps.

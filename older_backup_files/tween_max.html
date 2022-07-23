@@ -1,0 +1,81 @@
+<html>
+
+<head>
+
+
+<style>
+
+.panel{
+position: absolute;
+width: 55%;
+bottom: 0px;
+right: 0px;
+transform: scaleY(0);
+transform-origin: bottom;
+
+
+
+
+}
+#colors {
+opacity: 0.1;
+
+}
+#demo{
+    opacity: 0.5;
+}
+.box{
+    opacity: 0.5;
+    transform: scale(0);
+}
+
+
+</style>
+<!-- //<link rel="stylesheet" href="css/main.css"> -->
+</head>
+
+
+<body>
+<H1>ENgineering for tomorrow</H1>
+<button id="CPA">Watch here</button>
+<div class="panel">
+    <img src="images/colors_small.png" id="colors">
+    <p id="demo"> SOme words in the paragraph</p>
+    <div class="box">Box div text</div>
+
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/2.0.1/TimelineMax.min.js"></script>
+<script type="module">
+    import * as THREE from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/build/three.module.js';
+    import { OrbitControls } from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/examples/jsm/controls/OrbitControls.js';
+    import { GLTFLoader } from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/examples/jsm/loaders/GLTFLoader.js';
+    import * as SkeletonUtils from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/examples/jsm/utils/SkeletonUtils.js';
+    import * as tweenMax from 'https://cdnjs.cloudflare.com/ajax/libs/gsap/2.1.3/TweenMax.min.js';
+     //import * as TimelineMax from 'https://cdnjs.cloudflare.com/ajax/libs/gsap/2.0.1/TimelineMax.min.js';
+    
+    
+    
+    document.getElementById('CPA').addEventListener('click', function name(params) {
+     var tl = new TimelineMax({
+
+        });
+
+
+
+        tl.to('.panel', 2, { scaleY: 1, height: '80vh', ease: "bounce.out", y: 30 });
+        tl.to('#colors', 4, { opacity: 1, y: 20 });
+        tl.to('#demo', 2, { opacity: 1, y: 20 });
+        tl.to('.box', 2, { opacity: 1, y: 20, scale: 1 });
+    });
+</script>
+
+
+
+</body>
+
+
+
+
+
+
+</html>

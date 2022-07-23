@@ -1,0 +1,168 @@
+<html>
+
+<head>
+
+
+    <style>
+        html,
+        body {
+            margin: 0;
+            height: 100%;
+        }
+
+        #c {
+            width: 100%;
+            height: 100%;
+            background: url(https://threejsfundamentals.org/threejs/resources/images/daikanyama.jpg) no-repeat center center ;
+  background-size: cover;
+            display: block;
+        }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+
+
+<body>
+
+    <canvas id="c" name="c" tabindex="0"></canvas>
+
+    <script type="module">
+        import * as THREE from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/build/three.module.js';
+        import { GLTFLoader } from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/examples/jsm/loaders/GLTFLoader.js';
+
+        var x_pos = 0;
+        var z_pos = -20;
+        let pause, root, cube;
+
+        function main() {
+            const canvas = document.querySelector('#c');
+            const renderer = new THREE.WebGLRenderer({ canvas });
+
+            const fov = 75;
+            const aspect = 2;  // the canvas default
+            const near = 0.1;
+            const far = 25;
+            const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
+            camera.position.z = 2;
+
+            
+            
+
+            const scene = new THREE.Scene();
+            const bgtexture = new THREE.TextureLoader().load("../examples/textures/water.jpg");
+            //scene.add(bgtexture);
+
+
+            {
+                const color = 0xFFFFFF;
+                const intensity = 1;
+                const light = new THREE.DirectionalLight(color, intensity);
+                light.position.set(-1, 2, 4);
+                scene.add(light);
+            }
+
+
+            function resizeRendererToDisplaySize(renderer) {
+                const canvas = renderer.domElement;
+                const width = canvas.clientWidth;
+                const height = canvas.clientHeight;
+                const needResize = canvas.width !== width || canvas.height !== height;
+                if (needResize) {
+                    renderer.setSize(width, height, false);
+                }
+                return needResize;
+            }
+
+
+            const loader = new GLTFLoader().setPath('');
+
+            loader.load('cube_move.glb', function (gltf) {
+
+
+                gltf.scene.position.y = 0;
+                gltf.scene.position.x = x_pos;
+                gltf.scene.rotation.y = Math.PI / -2;
+                // gltf.scene.rotation.x = Math.PI / -2;
+                // gltf.scene.scale.x = 0.05;
+                // gltf.scene.scale.y = 0.05;
+                // gltf.scene.scale.z = 0.05;
+                gltf.scene.background = 'https://threejsfundamentals.org/threejs/resources/images/daikanyama.jpg) no-repeat center center ';
+                
+                const root = gltf.scene;
+                scene.add(root);
+                
+            
+            });
+
+
+
+
+
+
+            function render(time) {
+
+                if (pause == true) {
+                    renderer.render(scene, camera);
+                    return;
+                }
+                time *= 0.001;
+                z_pos += 0.1;
+
+
+                if (resizeRendererToDisplaySize(renderer)) {
+                    const canvas = renderer.domElement;
+                    camera.aspect = canvas.clientWidth / canvas.clientHeight;
+                    camera.updateProjectionMatrix();
+                }
+                renderer.render(scene, camera);
+                //}
+               
+                requestAnimationFrame(render);
+
+            }
+
+
+            requestAnimationFrame(render);
+
+
+
+            
+
+            // Create your background scene
+            // var backgroundScene = new THREE.Scene();
+            // var backgroundCamera = new THREE.Camera();
+            // backgroundScene.add(backgroundCamera);
+            // backgroundScene.add(backgroundMesh);
+
+
+        }
+        function root_mover() {
+            root.rotation.x += 0.1;
+            requestAnimationFrame(root_mover);
+
+            // while (x_pos < 2) {
+            //     root.position.x = x_pos;
+            //     x_pos += 0.01;
+            // }
+
+        }
+
+
+        main();
+
+
+
+
+
+    </script>
+
+
+
+</body>
+
+
+
+
+
+
+</html>

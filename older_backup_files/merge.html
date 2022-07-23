@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>My first three.js app</title>
+    <style>
+        body {
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <script type="module">
+        import * as THREE from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/build/three.module.js';
+        import { GLTFLoader } from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/examples/jsm/loaders/GLTFLoader.js';
+        import { DragControls } from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/examples/jsm/controls/DragControls.js';
+        import { OrbitControls } from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/examples/jsm/controls/OrbitControls.js';
+
+        import {
+            Group,
+        } from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/build/three.module.js';
+     var camera, scene, renderer;
+
+        init();
+        animate();
+
+        function init() {
+
+            camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 10);
+            camera.position.z = 1;
+
+            scene = new THREE.Scene();
+
+            var material = new THREE.MeshNormalMaterial();
+
+            var mesh1 = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.4, 0.4), material);
+            mesh1.position.x = - 0.5;
+            mesh1.updateMatrix();
+            scene.add( mesh1 );
+
+            var mesh2 = new THREE.Mesh(new THREE.SphereGeometry(0.2, 16, 8), material);
+            scene.add(mesh2);
+
+            // merge
+
+            mesh2.geometry.merge(mesh2.geometry, mesh1.geometry);
+            
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.body.appendChild(renderer.domElement);
+            const Dcontrols = new DragControls(mesh1, camera, renderer.domElement);
+            const Dcontrols2 = new DragControls(mesh2, camera, renderer.domElement)
+
+            
+
+        }
+        
+        function animate() {
+
+            requestAnimationFrame(animate);
+            renderer.render(scene, camera);
+
+        }
+    </script>
+</body>
+
+</html>

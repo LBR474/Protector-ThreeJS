@@ -1,0 +1,113 @@
+<html>
+
+<head>
+
+
+<style>
+body {
+    margin:0px;
+    height: 100vh;
+    /* //width: 100vw; */
+    Display: flex;
+    flex-direction: column;
+}
+
+
+
+.header{
+    height: 15vh;
+    background-color: red;
+    
+}
+
+.links{
+    height: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    color: white;
+
+}
+.content{
+    flex-grow: 1;
+    display: flex;
+    justify-content: space-between;
+}
+.sidebar{
+    background-color: aqua;
+    width: 15vw;
+}
+.button {
+    align-self: center;
+}
+
+.box{
+    background-color: blue;
+    display: block;
+    align-self: center;
+}
+.box2{
+    background-color: rgb(51, 255, 0);
+    display: block;
+    align-self: center;
+}
+.box3{
+    background-color: rgb(255, 0, 200);
+    display: block;
+    align-self: center;
+}
+
+.footer{
+    height: 15vh;
+    background-color: rgb(25, 0, 255);
+}
+
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.8.0/gsap.min.js" defer></script>
+<script src="gsap-JS.js" defer></script>
+
+</head>
+
+
+<body>
+    
+<div class="header">
+<div class="links">
+<div class="link">Link 1</div>
+<div class="link">Link 2</div>
+<div class="link">Link 3</div>
+</div>
+
+</div>
+<div class="content" id="content">
+    <div class="sidebar left"></div>
+    <!-- <div class="button">Reverse</div> -->
+    <script>
+        var x_pos = window.innerWidth / 2;
+        var y_pos = window.innerHeight / 2;
+        var dot = document.createElement("div");
+            dot.className = "dot";
+            dot.innerHTML = "Blah";
+            dot.style.position = "absolute";
+            dot.style.left = x_pos + 'px';
+            dot.style.top = y_pos + 'px';
+            content.appendChild(dot);
+        </script>
+    <div class="box">Box is here</div>
+    <div class="box2">Box2 is here</div>
+    <div class="box3">Box3 is here</div>
+    <div class="sidebar right"></div>
+</div>
+<div class="footer"></div>
+
+
+
+
+</body>
+
+
+
+
+
+
+</html>

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>My first three.js app</title>
+    <style>
+        body {
+            margin: 0;
+        }
+        #opener{
+            position: absolute;
+            top: 0px;
+            left: 0px;
+
+        }
+    </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.8.0/gsap.min.js"></script>
+</head>
+
+<body>
+    
+    <script type="module">
+
+
+        import * as THREE from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/build/three.module.js';
+        import { OrbitControls } from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/examples/jsm/controls/OrbitControls.js';
+        import { GLTFLoader } from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/examples/jsm/loaders/GLTFLoader.js';
+         import * as tweenMax from 'https://cdnjs.cloudflare.com/ajax/libs/gsap/2.1.3/TweenMax.min.js';
+        
+            
+
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color('white');
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+       
+        //document.body.onload(mousemove);
+        //document.body.onload = function () { mousemove };
+        //opener.onload(mousemove);
+
+
+        const geometry = new THREE.BoxGeometry();
+        const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+        const material2 = new THREE.MeshBasicMaterial({ color: 0xffff00 });
+        const cube_array = [];
+
+        const cube = new THREE.Mesh(geometry, material);
+        const cube2 = new THREE.Mesh(geometry, material2);
+        cube_array.push(cube);
+        //cube_array.push(cube2);
+        scene.add(cube);
+        var opener = document.createElement("div");
+            opener.id = 'opener';
+
+            opener.innerHTML = ' "onload=mousemove"';
+            document.body.appendChild(opener);
+
+        const gltfLoader = new GLTFLoader();
+        let scale_factor = 5;
+        let mine_red;
+        let i = 0;
+               // Load a glTF resource
+            gltfLoader.load(
+                // resource URL
+                'tothian_mine_extra_red_small.glb',
+                // called when the resource is loaded
+                function (gltf) {
+                    mine_red = gltf.scene;
+                    cube_array.push(mine_red);
+                    //scene.add(gltf.scene);
+
+                    gltf.animations; // Array<THREE.AnimationClip>
+                    gltf.scene; // THREE.Group
+                    gltf.scenes; // Array<THREE.Group>
+                    gltf.cameras; // Array<THREE.Camera>
+                    gltf.asset; // Object
+                    if (gltf.scene){
+                         mousemove(event);
+                    }
+
+                },
+               
+       
+            );
+
+        
+        
+        // gsap.to(cube_array[i].position, 2, { x: 3.5 });
+        
+       
+        // gsap.from(cube_array[i].position, 2, { x: 0 });
+
+        gsap.to(cube_array[i].position, 3, { x: 3.5 });
+            gsap.to(cube_array[i].position, { y: 3.5, duration: 1, delay: 1 });      //wait 1 second
+        //     //gsap.to(cube_array[i], { opacity: 0, duration: 1, delay: 2 }); //wait 2 seconds
+       
+        
+        function mousemove(event) {
+          //  function mousemove() {
+            //scene.add(cube_array[i]);
+            // if (cube_array[i] && cube_array[i].position.y < 1.5) {
+            //     tl.to(cube_array[i].position, 2, { y: 3.5 });
+            // } else {
+            //     scene.remove(cube_array[i]);
+            //     cube_array[i].position.y = 0;
+            //     scene.add(cube_array[i + 1]);
+            // }
+
+
+            // if (cube_array[i + 1] && cube_array[i + 1].position.y < 3.5) {
+            //     tl.to(cube_array[i + 1].position, 2, { y: 3.5 });
+            // }
+            // else {
+            //     scene.remove(cube_array[i + 1]);
+            //     cube_array[i + 1].position.y = 0;
+            //     scene.add(cube_array[i]);
+            // }
+
+        }
+
+
+        camera.position.z = 5;
+        opener.addEventListener('mousemove', mousemove);
+
+
+        const animate = function (i) {
+
+            requestAnimationFrame(animate);
+            for (let i = 0; i < cube_array.length; i++) {
+                cube_array[i].rotation.x += 0.01;
+                cube_array[i].rotation.y += 0.01;
+                cube_array[i].rotation.z += 0.01;
+
+            }
+
+
+            // cube_array[i].rotation.x += 0.01;
+            // cube_array[i].rotation.y += 0.01;
+
+
+
+            renderer.render(scene, camera);
+        }
+
+       
+
+        
+        animate();
+    </script>
+    
+</body>
+
+</html>
