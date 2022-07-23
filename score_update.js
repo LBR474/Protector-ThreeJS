@@ -74,7 +74,7 @@ let level_game_over = () => {
 
    
        document.querySelector("#C_D_F_next_level").innerHTML =
-           "<a href='./index.php'><h3>Try again?</h3></a>";   
+           "<a href='./index.html'><h3>Try again?</h3></a>";   
   
 
     
