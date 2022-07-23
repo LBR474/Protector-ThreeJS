@@ -289,7 +289,7 @@ let level_finish = (module_score_level_one, collision_count_nose, collision_coun
     document.querySelector("#C_D_F_next_level").innerHTML =
         // "<a href='./level_two/index.php?module_score_level_one_from_post=" +
         // module_score_level_one+ "'><h3>Go to next level?</h3></a></form>";
-        "<a href='./level_two/index.php'>Go to next level?</a>";
+        "<a href='./level_two/index.html'>Go to next level?</a>";
 
     document.querySelector("#C_D_F_try_again").innerHTML =
         "";
