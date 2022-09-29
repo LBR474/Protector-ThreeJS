@@ -259,7 +259,7 @@ const red_mines_array_2 = [];
 
 
 
-const S_geometry = new THREE.SphereGeometry(0.1, 32, 16);
+const S_geometry = new THREE.SphereGeometry(0.01, 32, 16);
 const S_material = new THREE.MeshBasicMaterial({ color: 0xffff00 });
 
 let sphere_array = []
@@ -268,7 +268,7 @@ for (let index = 0; index < number_of_mines * 3; index++) {
    
     const sphere = new THREE.Mesh(S_geometry, S_material);
     sphere_array.push(sphere)
-    sphere.name = "LOaded sphere" + index
+    sphere.name = "Loaded sphere" + index
     
 }
 

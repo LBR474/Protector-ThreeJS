@@ -120,9 +120,9 @@ let mine_mover_1 = () => {
             
             gltf_loads.mines_array[mine_number].children[1].material.transparent = true
                 gsap.to(gltf_loads.mines_array[mine_number].children[1].scale, 0.5, {
-                    x: 8 * Math.random(),
-                    y: 8 * Math.random(),
-                    z: 8 * Math.random(),
+                    x: 80 * Math.random(),
+                    y: 80 * Math.random(),
+                    z: 80 * Math.random(),
 
                     //onComplete: mine_piece_remove,
                     ease: "bounce.InOut",

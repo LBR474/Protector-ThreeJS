@@ -69,17 +69,17 @@
         #top_right_menu {
 
             position: absolute;
-            top: 0px;
-            left: 0px;
-            float: right;
-            width: 70vw;
-            height: 30vh;
-            color: #f2f2f2;
+            left: 100px;
+            top: 20px;
+            height: auto;
+            width: '100px';
+            z-index: 2;
+            background-color: azure;
             text-align: center;
             padding: 14px 16px;
             text-decoration: none;
-            background-color: #333;
-            color: #f1f1f1;
+            
+          
 
 
             display: block;
@@ -307,15 +307,11 @@
     </div>
 
     <div id="top_right_menu">
-        <p id="trn_intro">Click on stars background pic to start.
+        <p id="trn_intro">Click background to start game.
         <p id="trm_blurb">
-            Use mouse to move the Protector 
-            around to avoid incoming mines.<br>
-            <br>
-            100 points added for each mine avoided.
-            
-            -500 for each hull collision, -250 for each wing collision.
-            Five collisions on any individual level == game over.
+            Avoid mines by dagging the
+            protector. <br>
+            Five collisions = game over.
         </p>
     </div>
 
